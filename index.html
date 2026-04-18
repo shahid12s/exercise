@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Pose Trainer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">Live computer-vision lab</p>
+        <h1>Real-time pose detection for smart training</h1>
+        <p class="lede">Turn on your camera and get instant skeletal tracking, angles, and squat diagnostics powered by MediaPipe Pose.</p>
+        <div class="hero__actions">
+          <button id="startBtn" class="btn primary">Start camera</button>
+          <button id="stopBtn" class="btn ghost" disabled>Stop</button>
+          <button id="resetBtn" class="btn ghost" disabled>Reset counters</button>
+          <a href="dashboard.html" class="btn ghost" style="text-decoration: none; display: inline-block;">Dashboard</a>
+          <button id="logoutBtn" class="btn ghost">Logout</button>
+        </div>
+        <div class="mode-select">
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="squat" selected>Squat tracker</option>
+            <option value="wallsit">Wall-sit timer</option>
+            <option value="raw">Raw pose only</option>
+          </select>
+        </div>
+      </div>
+      <div class="hero__badge">
+        <span class="dot"></span>
+        <div>
+          <p class="label">Status</p>
+          <p id="statusText" class="value">Idle</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="panel video-panel">
+        <div class="video-shell">
+          <video id="camera" autoplay playsinline muted></video>
+          <canvas id="overlay"></canvas>
+          <div class="pill" id="poseState">No pose</div>
+          <div class="corner-label">Press "Start camera" to begin</div>
+        </div>
+        <div class="workout-hud">
+          <div class="hud-left">
+            <span class="hud-label">Status</span>
+            <span id="hudStatus">Idle</span>
+            <span class="hud-label">Mode</span>
+            <span id="hudMode">Squat</span>
+          </div>
+          <div class="hud-right">
+            <button id="exitWorkout" class="btn ghost small">Exit workout</button>
+          </div>
+        </div>
+        <div class="control-row">
+          <label class="toggle"><input type="checkbox" id="showSkeleton" checked><span>Show skeleton</span></label>
+          <label class="toggle"><input type="checkbox" id="mirrorView" checked><span>Mirror view</span></label>
+        </div>
+      </section>
+
+      <section class="panel stats-panel">
+        <div class="stat-grid">
+          <div class="stat">
+            <p class="label">Reps (total)</p>
+            <p class="value" id="repsTotal">0</p>
+          </div>
+          <div class="stat">
+            <p class="label">Reps (good)</p>
+            <p class="value" id="repsGood">0</p>
+          </div>
+          <div class="stat">
+            <p class="label">State</p>
+            <p class="value" id="flowState">—</p>
+          </div>
+          <div class="stat">
+            <p class="label">Hold (wall-sit)</p>
+            <p class="value" id="holdTime">0.0s</p>
+          </div>
+          <div class="stat">
+            <p class="label">Best hold</p>
+            <p class="value" id="bestHold">0.0s</p>
+          </div>
+          <div class="stat">
+            <p class="label">Torso angle</p>
+            <p class="value" id="torsoAngle">0°</p>
+          </div>
+          <div class="stat">
+            <p class="label">Knee angle</p>
+            <p class="value" id="kneeAngle">0°</p>
+          </div>
+          <div class="stat">
+            <p class="label">Hip angle</p>
+            <p class="value" id="hipAngle">0°</p>
+          </div>
+        </div>
+
+        <div class="feedback">
+          <h3>Feedback</h3>
+          <ul id="feedbackList"></ul>
+          <h3>Warnings</h3>
+          <ul id="warnList"></ul>
+        </div>
+      </section>
+    </main>
+    <div class="fullscreen-note">Press Esc or click Exit to leave full-screen workout view.</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
