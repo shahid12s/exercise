@@ -206,8 +206,8 @@
             </div>
 
             <div class="auth-tabs">
-                <button class="auth-tab active" onclick="switchTab('login')">Login</button>
-                <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+                <button class="auth-tab active" onclick="switchTab('login', event)">Login</button>
+                <button class="auth-tab" onclick="switchTab('signup', event)">Sign Up</button>
             </div>
 
             <div id="login-content" class="auth-content active">
@@ -218,7 +218,7 @@
                 </form>
                 <div id="login-message" class="auth-message"></div>
                 <div class="auth-note">
-                    Don't have an account? <a onclick="switchTab('signup')">Sign up here</a>
+                    Don't have an account? <a onclick="switchTab('signup', event)">Sign up here</a>
                 </div>
             </div>
 
@@ -233,12 +233,12 @@
                 </form>
                 <div id="signup-message" class="auth-message"></div>
                 <div class="auth-note">
-                    Already have an account? <a onclick="switchTab('login')">Login here</a>
+                    Already have an account? <a onclick="switchTab('login', event)">Login here</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="auth.js"></script>
+    <script type="module" src="auth.js"></script>
 </body>
 </html>

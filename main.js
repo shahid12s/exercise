@@ -498,10 +498,10 @@ function resetCounters() {
   bestHoldEl.textContent = '0.0s';
 }
 
-const API_BASE = 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 async function apiRequest(path, options = {}) {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
     credentials: 'include',
     ...options,

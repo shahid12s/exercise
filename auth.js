@@ -1,16 +1,21 @@
 // Tab switching
-function switchTab(tab) {
+function switchTab(tab, clickEvent) {
   const tabs = document.querySelectorAll('.auth-tab');
   const contents = document.querySelectorAll('.auth-content');
   
   tabs.forEach(t => t.classList.remove('active'));
   contents.forEach(c => c.classList.remove('active'));
   
-  event.target.classList.add('active');
+  const activeEvent = clickEvent || window.event;
+  if (activeEvent?.target) {
+    activeEvent.target.classList.add('active');
+  }
   document.getElementById(`${tab}-content`).classList.add('active');
 }
 
-const API_BASE = 'http://localhost:3001';
+window.switchTab = switchTab;
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Login form handler
 document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -21,7 +26,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   const messageEl = document.getElementById('login-message');
   
   try {
-    const res = await fetch(`${API_BASE}/api/login`, {
+    const res = await fetch(`${API_BASE_URL}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -72,7 +77,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
       throw new Error('Passwords do not match');
     }
 
-    const res = await fetch(`${API_BASE}/api/signup`, {
+    const res = await fetch(`${API_BASE_URL}/api/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ firstName, lastName, email, password, confirm }),
@@ -101,7 +106,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
 // Check if user is already logged in
 window.addEventListener('load', async () => {
   try {
-    const res = await fetch(`${API_BASE}/api/me`, {
+    const res = await fetch(`${API_BASE_URL}/api/me`, {
       credentials: 'include'
     });
 

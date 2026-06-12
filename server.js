@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
@@ -6,25 +7,36 @@ import cors from 'cors';
 import jwt from 'jsonwebtoken';
 
 const app = express();
-const PORT = 3001;
-const JWT_SECRET = 'your-secret-key-change-this';
+const PORT = process.env.PORT || 3001;
+const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()).filter(Boolean)
+  : [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'https://exercise-eight-pink.vercel.app'
+    ];
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
 // Database pool
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'Shahid@12',
-  database: 'workouts',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'Shahid@12',
+  database: process.env.DB_NAME || 'workouts',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
 // Middleware
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
+  origin: allowedOrigins,
   credentials: true
 }));
 
@@ -80,8 +92,8 @@ app.post('/api/signup', async (req, res) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
@@ -126,12 +138,12 @@ app.post('/api/login', async (req, res) => {
     const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
 
     res.cookie('token', token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
+  path: '/',
+  maxAge: 7 * 24 * 60 * 60 * 1000
+});
 
     res.json({ 
       message: 'Login successful',
@@ -185,8 +197,8 @@ app.get('/api/me', async (req, res) => {
 app.post('/api/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     path: '/'
   });
   res.json({ message: 'Logged out successfully' });
@@ -279,5 +291,5 @@ app.get('/api/progress', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

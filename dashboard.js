@@ -1,10 +1,10 @@
-const API_BASE = 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 let charts = {};
 
 async function loadDashboardData() {
   try {
     // Get current user
-    const userRes = await fetch(`${API_BASE}/api/me`, { credentials: 'include' });
+    const userRes = await fetch(`${API_BASE_URL}/api/me`, { credentials: 'include' });
     if (!userRes.ok) {
       window.location.href = 'auth.html';
       return;
@@ -14,7 +14,7 @@ async function loadDashboardData() {
     document.getElementById('userGreeting').textContent = `Welcome back, ${user.firstName}!`;
 
     // Get progress data
-    const progressRes = await fetch(`${API_BASE}/api/progress`, { 
+    const progressRes = await fetch(`${API_BASE_URL}/api/progress`, { 
       credentials: 'include' 
     });
     
@@ -283,7 +283,7 @@ function renderHistoryTable(data) {
 
 async function logout() {
   try {
-    await fetch(`${API_BASE}/api/logout`, {
+    await fetch(`${API_BASE_URL}/api/logout`, {
       method: 'POST',
       credentials: 'include'
     });
