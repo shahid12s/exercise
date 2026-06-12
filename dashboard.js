@@ -1,4 +1,15 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3001' : '');
+
+async function readResponseBody(res) {
+  const contentType = res.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return await res.json();
+  }
+
+  const text = await res.text();
+  return { message: text || `Request failed with status ${res.status}` };
+}
 let charts = {};
 
 async function loadDashboardData() {
@@ -10,7 +21,7 @@ async function loadDashboardData() {
       return;
     }
     
-    const user = await userRes.json();
+    const user = await readResponseBody(userRes);
     document.getElementById('userGreeting').textContent = `Welcome back, ${user.firstName}!`;
 
     // Get progress data
@@ -22,7 +33,7 @@ async function loadDashboardData() {
       throw new Error('Failed to fetch progress');
     }
 
-    const progressData = await progressRes.json();
+    const progressData = await readResponseBody(progressRes);
     
     // Update stats
     updateStats(progressData);

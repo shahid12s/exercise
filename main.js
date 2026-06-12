@@ -498,7 +498,18 @@ function resetCounters() {
   bestHoldEl.textContent = '0.0s';
 }
 
-const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || '';
+const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3001' : '');
+
+async function readResponseBody(res) {
+  const contentType = res.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return await res.json();
+  }
+
+  const text = await res.text();
+  return { message: text || `Request failed with status ${res.status}` };
+}
 
 async function apiRequest(path, options = {}) {
   const res = await fetch(`${API_BASE_URL}${path}`, {
@@ -507,10 +518,10 @@ async function apiRequest(path, options = {}) {
     ...options,
   });
   if (!res.ok) {
-    const msg = await res.json().catch(() => ({}));
+    const msg = await readResponseBody(res).catch(() => ({}));
     throw new Error(msg.message || 'Request failed');
   }
-  return res.json();
+  return readResponseBody(res);
 }
 
 async function handleLogout() {

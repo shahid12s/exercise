@@ -15,7 +15,18 @@ function switchTab(tab, clickEvent) {
 
 window.switchTab = switchTab;
 
-const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || '';
+const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3001' : '');
+
+async function readResponseBody(res) {
+  const contentType = res.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return await res.json();
+  }
+
+  const text = await res.text();
+  return { message: text || `Request failed with status ${res.status}` };
+}
 
 // Login form handler
 document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -33,7 +44,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       credentials: 'include'
     });
 
-    const data = await res.json();
+    const data = await readResponseBody(res);
 
     if (!res.ok) {
       throw new Error(data.message || 'Login failed');
@@ -84,7 +95,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
       credentials: 'include'
     });
 
-    const data = await res.json();
+    const data = await readResponseBody(res);
 
     if (!res.ok) {
       throw new Error(data.message || 'Signup failed');
