@@ -4,13 +4,12 @@
   "description": "",
   "type": "module",
   "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "vite --host --port 5173",
-    "dev": "vite --host --port 5173",
-    "server": "node server.js",
-    "setup-db": "node reset-db.js"
-  },
+"scripts": {
+  "start": "node server.js",
+  "dev": "vite --host --port 5173",
+  "server": "node server.js",
+  "setup-db": "node reset-db.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",

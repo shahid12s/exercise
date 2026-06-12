@@ -22,14 +22,16 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
 // Database pool
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'Shahid@12',
-  database: process.env.DB_NAME || 'workouts',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
+
 
 // Middleware
 app.set('trust proxy', 1);
@@ -288,6 +290,10 @@ app.get('/api/progress', async (req, res) => {
     console.error('Progress fetch error:', err);
     res.status(500).json({ message: 'Server error' });
   }
+});
+
+app.get('/', (req, res) => {
+  res.send('Backend Running');
 });
 
 app.listen(PORT, () => {
