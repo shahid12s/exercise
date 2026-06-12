@@ -15,7 +15,7 @@ function switchTab(tab, clickEvent) {
 
 window.switchTab = switchTab;
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || '';
 
 // Login form handler
 document.getElementById('login-form').addEventListener('submit', async (e) => {
