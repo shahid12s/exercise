@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3001' : '');
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://exercise-pdms.onrender.com';
 
 async function readResponseBody(res) {
   const contentType = res.headers.get('content-type') || '';

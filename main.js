@@ -458,20 +458,34 @@ function initPose() {
   pose.onResults(onResults);
 }
 
-function startCamera() {
+async function startCamera() {
   if (camera) return;
-  initPose();
-  workoutStartTime = Date.now();
-  workoutMetrics = { angles: [], kneeAngles: [], hipAngles: [], torsoAngles: [] };
-  camera = new Camera(videoEl, {
-    onFrame: async () => { await pose.send({ image: videoEl }); },
-    width: CONFIG.camera.width,
-    height: CONFIG.camera.height
-  });
-  camera.start();
-  startBtn.disabled = true; stopBtn.disabled = false; resetBtn.disabled = false;
-  setStatus('Streaming', true);
-  enterWorkoutMode();
+
+  try {
+    if (typeof Camera === 'undefined' || typeof Pose === 'undefined') {
+      throw new Error('Camera libraries failed to load');
+    }
+
+    initPose();
+    workoutStartTime = Date.now();
+    workoutMetrics = { angles: [], kneeAngles: [], hipAngles: [], torsoAngles: [] };
+    camera = new Camera(videoEl, {
+      onFrame: async () => { await pose.send({ image: videoEl }); },
+      width: CONFIG.camera.width,
+      height: CONFIG.camera.height
+    });
+    await camera.start();
+    startBtn.disabled = true; stopBtn.disabled = false; resetBtn.disabled = false;
+    setStatus('Streaming', true);
+    enterWorkoutMode();
+  } catch (err) {
+    camera = null;
+    workoutStartTime = null;
+    updatePoseLabel(err?.message || 'Camera failed to start', 'warn');
+    setStatus('Camera error', false);
+    startBtn.disabled = false; stopBtn.disabled = true; resetBtn.disabled = true;
+    console.error('Camera startup error:', err);
+  }
 }
 
 function stopCamera() {
@@ -498,7 +512,7 @@ function resetCounters() {
   bestHoldEl.textContent = '0.0s';
 }
 
-const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3001' : '');
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://exercise-pdms.onrender.com';
 
 async function readResponseBody(res) {
   const contentType = res.headers.get('content-type') || '';
