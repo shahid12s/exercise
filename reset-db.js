@@ -1,23 +1,43 @@
-import mysql from 'mysql2/promise.js';
+import 'dotenv/config';
+import mysql from 'mysql2/promise';
 
 async function setupDatabase() {
   try {
+    const {
+      DB_HOST,
+      DB_PORT = '3306',
+      DB_USER,
+      DB_PASSWORD,
+      DB_NAME
+    } = process.env;
+
+    console.log('DB_HOST:', DB_HOST);
+    console.log('DB_PORT:', DB_PORT);
+    console.log('DB_USER:', DB_USER);
+    console.log('DB_NAME:', DB_NAME);
+
+    if (!DB_HOST || !DB_USER || !DB_PASSWORD || !DB_NAME) {
+      throw new Error('Missing required database environment variables');
+    }
+
     const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: 'Shahid@12'
+      host: DB_HOST,
+      port: Number(DB_PORT),
+      user: DB_USER,
+      password: DB_PASSWORD,
+      multipleStatements: true
     });
 
     console.log('Connected to MySQL');
 
     // Drop and recreate database
-    await connection.query('DROP DATABASE IF EXISTS workouts');
+    await connection.query(`DROP DATABASE IF EXISTS \`${DB_NAME}\``);
     console.log('✅ Database dropped');
 
-    await connection.query('CREATE DATABASE workouts');
+    await connection.query(`CREATE DATABASE \`${DB_NAME}\``);
     console.log('✅ Database created');
 
-    await connection.query('USE workouts');
+    await connection.query(`USE \`${DB_NAME}\``);
     console.log('✅ Database selected');
 
     const createUsersTableSQL = `
