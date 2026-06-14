@@ -1,4 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://exercise-pdms.onrender.com';
+const API_BASE_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://exercise-pdms.onrender.com';
 
 async function readResponseBody(res) {
   const contentType = res.headers.get('content-type') || '';
@@ -15,6 +18,7 @@ let charts = {};
 async function loadDashboardData() {
   try {
     // Get current user
+    console.log('API_BASE_URL:', API_BASE_URL);
     const userRes = await fetch(`${API_BASE_URL}/api/me`, { credentials: 'include' });
     if (!userRes.ok) {
       window.location.href = 'auth.html';
@@ -25,6 +29,7 @@ async function loadDashboardData() {
     document.getElementById('userGreeting').textContent = `Welcome back, ${user.firstName}!`;
 
     // Get progress data
+    console.log('API_BASE_URL:', API_BASE_URL);
     const progressRes = await fetch(`${API_BASE_URL}/api/progress`, { 
       credentials: 'include' 
     });
@@ -294,6 +299,7 @@ function renderHistoryTable(data) {
 
 async function logout() {
   try {
+    console.log('API_BASE_URL:', API_BASE_URL);
     await fetch(`${API_BASE_URL}/api/logout`, {
       method: 'POST',
       credentials: 'include'

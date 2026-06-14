@@ -488,7 +488,7 @@ async function startCamera() {
   }
 }
 
-function stopCamera() {
+function stopCamera() {s
   if (camera && camera.stop) camera.stop();
   camera = null;
   startBtn.disabled = false; stopBtn.disabled = true;
@@ -512,7 +512,10 @@ function resetCounters() {
   bestHoldEl.textContent = '0.0s';
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://exercise-pdms.onrender.com';
+const API_BASE_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://exercise-pdms.onrender.com';
 
 async function readResponseBody(res) {
   const contentType = res.headers.get('content-type') || '';
@@ -526,6 +529,7 @@ async function readResponseBody(res) {
 }
 
 async function apiRequest(path, options = {}) {
+  console.log('API_BASE_URL:', API_BASE_URL);
   const res = await fetch(`${API_BASE_URL}${path}`, {
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
     credentials: 'include',

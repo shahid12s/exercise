@@ -15,7 +15,10 @@ function switchTab(tab, clickEvent) {
 
 window.switchTab = switchTab;
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://exercise-pdms.onrender.com';
+const API_BASE_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://exercise-pdms.onrender.com';
 
 async function readResponseBody(res) {
   const contentType = res.headers.get('content-type') || '';
@@ -37,6 +40,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   const messageEl = document.getElementById('login-message');
   
   try {
+    console.log('API_BASE_URL:', API_BASE_URL);
     const res = await fetch(`${API_BASE_URL}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -88,6 +92,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
       throw new Error('Passwords do not match');
     }
 
+    console.log('API_BASE_URL:', API_BASE_URL);
     const res = await fetch(`${API_BASE_URL}/api/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -117,6 +122,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
 // Check if user is already logged in
 window.addEventListener('load', async () => {
   try {
+    console.log('API_BASE_URL:', API_BASE_URL);
     const res = await fetch(`${API_BASE_URL}/api/me`, {
       credentials: 'include'
     });
